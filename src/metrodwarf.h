@@ -16,7 +16,7 @@
 
 /* audio functions */
 extern void audio_init(void);
-extern void audio_write(const char * data);
+extern void audio_write(const char * data, size_t bytes);
 extern void audio_die(void);
 
 /* base64 functions */

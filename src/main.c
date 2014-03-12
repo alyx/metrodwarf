@@ -2,7 +2,10 @@
 
 struct timeval start, last;
 
-const char * slurp(const char * filename)
+const char *SOUND;
+size_t SOUND_SIZE;
+
+void global_slurp(const char * filename)
 {
     int fd;
     char * buffer;
@@ -16,11 +19,10 @@ const char * slurp(const char * filename)
     }
 
     fstat(fd, &s);
-    buffer = mmap(0, s.st_size, PROT_READ, MAP_PRIVATE, fd, 0);
+    SOUND = mmap(0, s.st_size, PROT_READ, MAP_PRIVATE, fd, 0);
+    SOUND_SIZE = s.st_size;
     
     close(fd);
-
-    return buffer;
 }
 
 inline int64_t tv_to_u(struct timeval s)
@@ -61,7 +63,7 @@ void beat(int delay, const char * sound)
         usleep(slp);
         gettimeofday(&tv, 0);
  
-        audio_write(sound);
+        audio_write(sound, SOUND_SIZE);
         fflush(stdout);
  
         printf("\033[5;1Hdrift: %d compensate: %d (usec)   ",
@@ -94,12 +96,12 @@ int main(int c, char**v)
         exit(1);
     }
 
-    buf = slurp("tick.wav");
+    global_slurp("tick.wav");
  
     audio_init();
     gettimeofday(&start, 0);
     last = start;
-    beat(60 * 1000000 / bpm, buf);
+    beat(60 * 1000000 / bpm, SOUND);
 
     audio_die(); 
     return 0;

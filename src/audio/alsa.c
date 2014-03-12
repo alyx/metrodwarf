@@ -40,7 +40,7 @@ void audio_init(void)
     snd_pcm_hw_params_get_period_size(params, &frames, &dir);
 }
 
-void audio_write(const char * data)
+void audio_write(const char * data, size_t bytes)
 {
     int ret, size;
 
